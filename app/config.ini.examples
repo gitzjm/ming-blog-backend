@@ -1,0 +1,18 @@
+# 将此文件名改为config.ini
+[server]
+host=0.0.0.0
+port=8000
+mode=debug
+dode=fish
+
+[database]
+host=localhost
+port=27017
+name=ming-blog
+username=username
+password=123456
+
+[redis]
+host=localhost
+port=6379
+db=1
