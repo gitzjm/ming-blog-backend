@@ -1,3 +1,7 @@
+"""
+schema
+"""
+
 from schema.user import (
     LoginSchema,
     RegisterSchema

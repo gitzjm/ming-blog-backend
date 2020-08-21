@@ -12,9 +12,11 @@ from Crypto.Cipher import AES
 class AesCrypto:
     """AES工具"""
 
-    def __init__(self,
-                 key: str,
-                 key_length: int = 16):
+    def __init__(
+            self,
+            key: str,
+            key_length: int = 16
+    ):
         """
         :param key:密钥
         """
@@ -37,10 +39,10 @@ class AesCrypto:
         count = len(text)
         add = length - (count % length)
         text = text + (b'\0' * add)
-        self.ciphertext = cryptor.encrypt(text)
+        ciphertext = cryptor.encrypt(text)
         # 因为AES加密时候得到的字符串不一定是ascii字符集的，输出到终端或者保存时候可能存在问题
         # 所以这里统一把加密后的字符串转化为16进制字符串
-        return b2a_hex(self.ciphertext).decode("ASCII")
+        return b2a_hex(ciphertext).decode("ASCII")
 
     def decrypt(
             self,
@@ -68,8 +70,8 @@ class NsPwdCrypto:
         """
         self.aes_obj = aes_obj
 
+    @staticmethod
     def sha_pwd(
-            self,
             pwd: str
     ) -> str:
         """
@@ -82,8 +84,8 @@ class NsPwdCrypto:
         sha_pwd = sha_512.hexdigest()
         return sha_pwd
 
+    @staticmethod
     def bcrypt_pwd(
-            self,
             pwd: str,
             salt: typing.Optional[bytes] = None
     ) -> str:
@@ -117,14 +119,14 @@ class NsPwdCrypto:
         """
         密码加密
         :param pwd: 密码 str
-        :return:crypto_pwd 加密过的密码 str
+        :return: 加密过的密码 str
         """
         sha_pwd = self.sha_pwd(pwd)
         bcrypt_pwd = self.bcrypt_pwd(sha_pwd)
         aes_pwd = self.aes_pwd(bcrypt_pwd)
         return aes_pwd
 
-    def valid_pwd(
+    def check_pwd(
             self,
             pwd: str,
             crypto_pwd: str
@@ -133,19 +135,17 @@ class NsPwdCrypto:
         验证密码是否正确
         :param pwd: 用户输入的密码
         :param crypto_pwd: 数据库加密过的密码
-        :return: True/False
+        :return: 密码是否正确
         """
-        salt = aes_obj.decrypt(crypto_pwd).encode("utf8")
+        salt = self.aes_obj.decrypt(crypto_pwd).encode("utf8")
         sha_pwd = self.sha_pwd(pwd)
         bcrypt_pwd = self.bcrypt_pwd(sha_pwd, salt)
-        if bcrypt_pwd == salt:
-            return True
-        else:
-            return False
+        return bcrypt_pwd == salt
 
 
-aes_obj = AesCrypto(key="4190dbe7b5f7db0b")
-pwd_handler = NsPwdCrypto(aes_obj)
-# s=ns_crypto.crypto_pwd('123456')
-# print(s)
-# b0779de075fcc13049804f0c662baea7b5b65f26ba9374a4600c56d336081b02778d66f25be3a9431d24703327f177547a04aa0238095100733ea0d6f47da310
+aes_handler = AesCrypto(key="4190dbe7b5f7db0b")
+pwd_handler = NsPwdCrypto(aes_handler)
+
+if __name__ == '__main__':
+    s = pwd_handler.crypto_pwd('123456')
+    print(s)

@@ -6,7 +6,7 @@ import configparser
 import os
 
 # 工程路径
-PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 
 # ==============================
@@ -24,8 +24,6 @@ class ConfigMeta(type):
         if cls.path is not None:
             config = configparser.RawConfigParser()
             config.read(cls.path)
-            print(cls.path)
-            print(config._sections)
             for section in config.sections():
                 setattr(cls._instance, section, lambda x: x)
                 for key, value in config.items(section):
@@ -33,7 +31,6 @@ class ConfigMeta(type):
 
     def __call__(cls, *args, **kwargs):
         """返回配置"""
-        print('xxx')
         if cls._instance is None:
             cls._instance = super().__call__()
             cls.__load()
@@ -46,5 +43,5 @@ class Config(metaclass=ConfigMeta):
 
     path = os.path.join(PROJECT_PATH, "config.ini")
 
-conf = Config()
 
+conf = Config()

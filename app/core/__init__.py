@@ -1,3 +1,6 @@
+"""
+core
+"""
 from core.conf import conf
 from core.db import (
     MONGODB_CONN,
@@ -10,6 +13,14 @@ from core.events import (
     close_redis_connection
 )
 
+from core.exceptions import (
+    fish_exception_handler,
+    invalid_id_exception_handler,
+    mongodb_exception_handler,
+    redis_exception_handler,
+    FishException
+)
+
 __all__ = [
     "conf",
     "MONGODB_CONN",
@@ -17,5 +28,10 @@ __all__ = [
     "connect_to_mongo",
     "close_mongo_connection",
     "connect_to_redis",
-    "close_redis_connection"
+    "close_redis_connection",
+    "fish_exception_handler",
+    "invalid_id_exception_handler",
+    "mongodb_exception_handler",
+    "redis_exception_handler",
+    "FishException"
 ]

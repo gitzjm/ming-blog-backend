@@ -2,7 +2,6 @@
 <project version="4">
   <component name="PylintConfigService">
     <option name="customPylintPath" value="E:\venv\ming-blog-backend\Scripts\pylint.exe" />
-    <option name="pylintArguments" value="--rcfile E:\blog\ming-blog-backend\pylint.conf" />
-    <option name="pylintrcPath" value="E:\blog\ming-blog-backend\pylint.conf" />
+    <option name="pylintrcPath" value="E:\blog\ming-blog-backend\.pylintrc" />
   </component>
 </project>

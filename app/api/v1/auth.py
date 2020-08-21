@@ -1,7 +1,9 @@
 """
 登录相关接口
 """
+import time
 
+from starlette.requests import Request
 from fastapi import (
     APIRouter,
     Depends,
@@ -11,7 +13,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from depends import (
     pwd_handler,
-    get_mongo_client
+    get_mongo_client, get_ip
 )
 from schema.user import (
     LoginSchema,
@@ -28,14 +30,13 @@ router = APIRouter()
 )
 async def login(
         conn: AsyncIOMotorClient = Depends(get_mongo_client),
-        # username: str = Body(..., description='用户名'),
-        # password: str = Body(..., description='密码'),
-        user: LoginSchema = Body(..., )
+        user_form: LoginSchema = Body(..., )
 ):
-    document = await conn.users.find_one(
-        {'username': user.username}
+    """登录"""
+    user = await conn.users.find_one(
+        {'username': user_form.username}
     )
-    if user.password == document.password:
+    if pwd_handler.check_pwd(user_form.password, user.password):
         return 'OK'
     else:
         return 'failed'
@@ -46,20 +47,24 @@ async def login(
     name='注册',
     description='注册',
 )
-async def login(
+async def register(
+        request: Request,
         conn: AsyncIOMotorClient = Depends(get_mongo_client),
-        user: RegisterSchema = Body(..., )
+        user_form: RegisterSchema = Body(..., )
 ):
-    document = await conn.users.find_one(
-        {'username': user.username}
+    """注册"""
+    user = await conn.users.find_one(
+        {'username': user_form.username}
     )
-    if document:
+    if user:
         return '用户已注册'
-    if user.password == user.re_password:
-        pwd = pwd_handler.crypto_pwd(user.password)
+    if user_form.password == user_form.re_password:
+        pwd = pwd_handler.crypto_pwd(user_form.password)
         conn.users.inster_one({
-            'username': user.username,
-            'password': pwd
+            'username': user_form.username,
+            'password': pwd,
+            'reg_time': time.time(),
+            'reg_ip': await get_ip(request)
         })
         return '注册成功'
     else:

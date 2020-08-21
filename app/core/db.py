@@ -18,6 +18,3 @@ class Conn:
 MONGODB_CONN = Conn()
 
 REDIS_CONN = Conn()
-
-
-
